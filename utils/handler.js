@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const axiosInstance = {
   get(url, params) {
     return axios.get(`/${url}`, {
