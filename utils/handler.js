@@ -1,6 +1,9 @@
 import axios from "axios";
+import { getDaysTillNewYearsDay } from "./getDays.js";
 
-const BASE_URL = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
+const BASE_URL = `https://api.telegram.org/bot${
+  process.env.BOT_TOKEN || "7486627229:AAEV9U_Mp2Jh3aP_NVcGxSXC4qEsohVuddg"
+}`;
 
 export const axiosInstance = {
   get(url, params) {
@@ -20,47 +23,40 @@ export const axiosInstance = {
 };
 
 export const sendMessage = (messageObj, messageText) => {
-  return axiosInstance.get("sendMessage", {
-    chat_id: messageObj.chat_id,
-    text: messageObj.text,
-  });
+  try {
+    return axiosInstance.get("sendMessage", {
+      chat_id: messageObj.chat.id,
+      text: messageText,
+    });
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 export const handleMessage = (messageObj) => {
   const messageText = messageObj?.text || "";
+  switch (messageText) {
+    case "/start":
+      return sendMessage(
+        messageObj,
+        "Привет, я бот, который говорит, сколько дней осталось до нового года. Чтобы использовать, напишите команду /find"
+      );
+      break;
+    case "/find":
+      return sendMessage(
+        messageObj,
+        `До Нового года ${getDaysTillNewYearsDay()}`
+      );
+      break;
 
-  if (messageText.charAt(0) === "/") {
-    const command = messageText.substring(1);
-    switch (command) {
-      case "start":
-        return sendMessage(
-          messageObj,
-          "Привет, я бот, который говорит, сколько дней осталось до нового года. Чтобы использовать, напишите команду /find"
-        );
-        break;
-      case "find":
-        break;
-
-      default:
-        return sendMessage(messageObj, "К сожалению, не знаю такой команды...");
-        break;
-    }
-  } else {
-    // Send the same message back to the user
-    sendMessage(messageObj, messageText);
+    default:
+      return sendMessage(messageObj, "К сожалению, не знаю такой команды...");
+      break;
   }
-  return axiosInstance.get("sendMessage", {
-    chat_id: messageObj.chat_id,
-    text: messageObj.text,
-  });
 };
 
 export const handler = async (req, res) => {
-  const { body } = req;
-
-  if (body) {
-    const messageObj = body.message;
-    await handleMessage(messageObj);
-  }
+  const messageObj = req.body.message;
+  await handleMessage(messageObj);
   return;
 };
