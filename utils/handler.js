@@ -15,6 +15,13 @@ export const axiosInstance = {
   },
 };
 
+export const sendMessage = (messageObj, messageText) => {
+  return axiosInstance.get("sendMessage", {
+    chat_id: messageObj.chat_id,
+    text: messageObj.text,
+  });
+};
+
 export const handleMessage = (messageObj) => {
   const messageText = messageObj?.text || "";
 
