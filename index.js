@@ -45,6 +45,8 @@ const app = express();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+console.log(bot);
+
 app.use(express.json());
 
 bot.start((ctx) => {
