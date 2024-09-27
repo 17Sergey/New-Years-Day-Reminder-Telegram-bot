@@ -34,38 +34,70 @@
 //   await bot.sendMessage(chatId, `${responseText}`);
 // });
 
-import { getDaysTillNewYearsDay } from "./utils/getDays.js";
 import express from "express";
-import dotenv from "dotenv";
-import { Telegraf } from "telegraf";
-
-dotenv.config();
+import { handler } from "./utils/handler.js";
 
 const app = express();
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
-
-console.log(bot);
-
 app.use(express.json());
 
-bot.start((ctx) => {
-  console.log(ctx);
-
-  ctx.reply(
-    "Привет! Я твой бот-календарь. Спроси меня, сколько осталось до Нового года."
-  );
+app.post("*", async (req, res) => {
+  // console.log(req.body);
+  res.send(await handler(req));
 });
 
-bot.command("newyear", (ctx) => {
-  ctx.reply(`До Нового года ${getDaysTillNewYearsDay()}`);
+app.get("*", async (req, res) => {
+  res.send("Hello get");
+  res.send(await handler(req));
 });
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, function (err) {
+  if (err) console.log(err);
+  console.log("Server listening on PORT", PORT);
 });
+
+// Set web hook and run req in Postman
+
+// "https://api.telegram.org/bot7881339413:AAEfzzitcIW8njHSS-3P9Bqiv0CRToLOfS0/setWebhook?url=https://new-years-day-reminder-telegram-bot.onrender.com/"
+
+/////
+
+// import { getDaysTillNewYearsDay } from "./utils/getDays.js";
+// import express from "express";
+// import dotenv from "dotenv";
+// import { Telegraf } from "telegraf";
+
+// dotenv.config();
+
+// const app = express();
+
+// const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// console.log(bot);
+
+// app.use(express.json());
+
+// bot.start((ctx) => {
+//   console.log(ctx);
+
+//   ctx.reply(
+//     "Привет! Я твой бот-календарь. Спроси меня, сколько осталось до Нового года."
+//   );
+// });
+
+// bot.command("newyear", (ctx) => {
+//   ctx.reply(`До Нового года ${getDaysTillNewYearsDay()}`);
+// });
+
+// const PORT = process.env.PORT || 5000;
+
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+
+//////
 
 // const MY_TOKEN = "7881339413:AAEfzzitcIW8njHSS-3P9Bqiv0CRToLOfS0";
 
