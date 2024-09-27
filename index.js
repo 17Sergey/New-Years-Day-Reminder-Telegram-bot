@@ -48,7 +48,7 @@ app.post("*", async (req, res) => {
 
 app.get("*", async (req, res) => {
   res.send("Hello get");
-  res.send(await handler(req));
+  // res.send(await handler(req));
 });
 
 const PORT = process.env.PORT || 5000;
